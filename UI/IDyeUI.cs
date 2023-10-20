@@ -118,7 +118,7 @@ namespace IDye.UI
             barRMinus.TextColor = Color.Gray;
             mainPanel.Append(barRMinus);
 
-            // primary R bar
+            // primary R bar (taken from Terraria.GameContent.UI.States.UICharacterCreation)
             UIElement primaryColorBarR = new UIColoredSlider(LocalizedText.Empty, () => _tempPrimaryColor.X, delegate (float x)
             {
                 UpdateHSLValue(SliderIds.PrimaryR, x);
@@ -145,7 +145,7 @@ namespace IDye.UI
             barRPlus.TextColor = Color.Gray;
             mainPanel.Append(barRPlus);
 
-            // primary G bar
+            // primary G bar (smae as primaryColorBarR)
             UIElement primaryColorBarG = new UIColoredSlider(LocalizedText.Empty, () => _tempPrimaryColor.Y, delegate (float x)
             {
                 UpdateHSLValue(SliderIds.PrimaryG, x);
@@ -170,7 +170,7 @@ namespace IDye.UI
             dyeListPanel.VAlign = 0f;
             BG.Append(dyeListPanel);
 
-            // dye lsit
+            // dye list
             _dyeList = new UIList();
             _dyeList.HAlign = 0f;
             _dyeList.VAlign = 0f;
@@ -186,10 +186,8 @@ namespace IDye.UI
             _dyeListScrollBar.HAlign = 1.05f;
             _dyeList.SetScrollbar(_dyeListScrollBar);
             dyeListPanel.Append(_dyeListScrollBar);
-            //UIPlayer dummy = new UIPlayer(new Vector2(300f, 300f));
-            //panel.Append(dummy);              // 5
 
-            //exit button
+            //exit button (taken from Terraria.GameContent.UI.States.UIBestiaryTest)
             UITextPanel<LocalizedText> ExitButton = new UITextPanel<LocalizedText>(Language.GetText("UI.Back"), 0.7f, large: true)
             {
                 Width = StyleDimension.FromPixelsAndPercent(-10f, 0.5f),
@@ -206,23 +204,27 @@ namespace IDye.UI
         }
         private void OnApplyClick(UIMouseEvent evt, UIElement listeningElement)
         {
+            // currently only tests functionality
             var iDyePlayer = Main.LocalPlayer.GetModPlayer<IDyePlayer>();
             iDyePlayer.iDyePrimaryColors[1] = new Microsoft.Xna.Framework.Color(0f, 0f, 1f);
             iDyePlayer.iDyePasses[1] = "ArmorLivingRainbow";
             Main.NewText($"primary color: r{iDyePlayer.iDyePrimaryColors[1].R}, g{iDyePlayer.iDyePrimaryColors[1].G}, b{iDyePlayer.iDyePrimaryColors[1].B}");
             Main.NewText($"saturation: {iDyePlayer.iDyeSaturation[1]}f");
             Main.NewText($"pass: {iDyePlayer.iDyePasses[1]}");
-            //IDyePlayer.passes[1] = "ArmorLivingRainbow";
-            //Main.NewText($"pass: {IDyePlayer.passes[1]}");
             SoundEngine.PlaySound(SoundID.MenuTick);
         }
         private void OnDyeListClick(UIMouseEvent evt, UIElement listeningElement)
         {
+            // idea here would be copy over the items' defaults (colors, sat, ect) to the player/set the players' "iDyeItemID" to this item
+            // for use in IDyeArmorShaderData.
+            // thing is, this isn't possible yet
+
             selectedDye.TextColor = Color.Gray;
             SoundEngine.PlaySound(SoundID.MenuTick);
             selectedDye = ((CustomUIText)evt.Target);
             selectedDye.TextColor = Color.Yellow;
             
+            // various reasearch bits
             //var iDyePlayer = Main.LocalPlayer.GetModPlayer<IDyePlayer>();
             //iDyePlayer.iDyePrimaryColors[1] = new Microsoft.Xna.Framework.Color(0f, 0f, 1f);
             //iDyePlayer.iDyePasses[1] = "ArmorLivingRainbow";
@@ -230,7 +232,6 @@ namespace IDye.UI
             //Main.NewText($"saturation: {iDyePlayer.iDyeSaturation[1]}f");
             //Main.NewText($"pass: {iDyePlayer.iDyePasses[1]}");
             //Main.NewText($"e: {GameShaders.Armor.GetShaderFromItemId(selectedDye.ItemID)}");
-
             //IDyePlayer.passes[1] = "ArmorLivingRainbow";
             //Main.NewText($"pass: {IDyePlayer.passes[1]}");
         }
@@ -279,7 +280,6 @@ namespace IDye.UI
             SoundEngine.PlaySound(SoundID.MenuTick);
             _tempPrimaryColor.X += 0.0005f;
             UpdateHSLValue(SliderIds.PrimaryR, _tempPrimaryColor.X);
-            //primaryColorBarRText.SetText(Math.Round(-10 - (-20 * _tempPrimaryColor.X), 2).ToString());
         }
         private void onTextHover(UIMouseEvent evt, UIElement listeningElement)
         {
@@ -318,6 +318,7 @@ namespace IDye.UI
 
         public override void OnActivate()
         {
+            // likely going to fill slots with dyes from default slot (0) later
             tempPlayer.armor = Main.LocalPlayer.armor;
             tempPlayer.dye = Main.LocalPlayer.dye;
             //var iDyeTempPlayer = _tempPlayer.GetModPlayer<IDyePlayer>();
@@ -349,6 +350,8 @@ namespace IDye.UI
         {
             _dyeList.Clear();
 
+            // until research is done, going to just fill the list with all dye items.
+            // nothing here does much yet though
             List<CustomUIText> TempList = new List<CustomUIText>();
             for (int i = 0; i < ItemLoader.ItemCount; i++)
             {
@@ -366,6 +369,8 @@ namespace IDye.UI
                 }  
             }
 
+            // trying to order list alphabetically, no dice as far as i can tell though
+            // likely related to the "icons"
             TempList.Sort(delegate (CustomUIText x, CustomUIText y)
             {
                 if (x.Text == null && y.Text == null) return 0;
@@ -382,20 +387,6 @@ namespace IDye.UI
                 TempList[i].OnMouseOut += DyeListMouseFade;
                 _dyeList.Add(TempList[i]);
             }
-
-
-            //_dyeList.ManualSortMethod(PlayerFileData x, PlayerFileData y)
-            //{
-            //    if (x.IsFavorite && !y.IsFavorite)
-            //    {
-            //        return -1;
-            //    }
-            //    if (!x.IsFavorite && y.IsFavorite)
-            //    {
-            //        return 1;
-            //    }
-            //    return (x.Name.CompareTo(y.Name) == 0) ? x.GetFileName().CompareTo(y.GetFileName()) : x.Name.CompareTo(y.Name);
-            //});
 
             //_dyeList.UpdateOrder();
         }
@@ -438,91 +429,5 @@ namespace IDye.UI
             //}
             //UpdateHexText(color);
         }
-
-        //public void ClickColorPicker(UIMouseEvent evt, UIElement listeningElement)
-        //{
-        //    SoundEngine.PlaySound(SoundID.MenuTick);
-        //    int num = 0;
-        //    while (true)
-        //    {
-        //        if (num < _colorPickers.Length)
-        //        {
-        //            if (_colorPickers[num] == evt.Target)
-        //            {
-        //                break;
-        //            }
-        //            num++;
-        //            continue;
-        //        }
-        //        return;
-        //    }
-        //    SelectColorPicker((CategoryId)num);
-        //}
-
-        //public void SelectColorPicker(CategoryId selection)
-        //{
-        //    _selectedPicker = selection;
-        //    switch (selection)
-        //    {
-        //        case CategoryId.CharInfo:
-        //            Click_CharInfo(null, null);
-        //            return;
-        //        case CategoryId.Clothing:
-        //            Click_ClothStyles(null, null);
-        //            return;
-        //        case CategoryId.HairStyle:
-        //            Click_HairStyles(null, null);
-        //            return;
-        //    }
-        //    UnselectAllCategories();
-        //    _middleContainer.Append(_hslContainer);
-        //    for (int i = 0; i < _colorPickers.Length; i++)
-        //    {
-        //        if (_colorPickers[i] != null)
-        //        {
-        //            _colorPickers[i].SetSelected(i == (int)selection);
-        //        }
-        //    }
-        //    Vector3 currentColorHSL = Vector3.get_One();
-        //    switch (_selectedPicker)
-        //    {
-        //        case CategoryId.HairColor:
-        //            currentColorHSL = RgbToScaledHsl(_player.hairColor);
-        //            break;
-        //        case CategoryId.Eye:
-        //            currentColorHSL = RgbToScaledHsl(_player.eyeColor);
-        //            break;
-        //        case CategoryId.Skin:
-        //            currentColorHSL = RgbToScaledHsl(_player.skinColor);
-        //            break;
-        //        case CategoryId.Shirt:
-        //            currentColorHSL = RgbToScaledHsl(_player.shirtColor);
-        //            break;
-        //        case CategoryId.Undershirt:
-        //            currentColorHSL = RgbToScaledHsl(_player.underShirtColor);
-        //            break;
-        //        case CategoryId.Pants:
-        //            currentColorHSL = RgbToScaledHsl(_player.pantsColor);
-        //            break;
-        //        case CategoryId.Shoes:
-        //            currentColorHSL = RgbToScaledHsl(_player.shoeColor);
-        //            break;
-        //    }
-        //    _currentColorHSL = currentColorHSL;
-        //    UpdateHexText(ScaledHslToRgb(((IntPtr)(void*)currentColorHSL).X, ((IntPtr)(void*)currentColorHSL).Y, ((IntPtr)(void*)currentColorHSL).Z));
-        //}
-
     }
-    //public class StringTableSerializer : TagSerializer<string[], TagCompound>
-    //{
-    //    public override TagCompound Serialize(string[] value) => new TagCompound
-    //    {
-    //        ["x"] = value.X,
-    //        ["y"] = value.Y,
-    //        ["width"] = value.Width,
-    //        ["height"] = value.Height
-    //    };
-
-    //    public override Rectangle Deserialize(TagCompound tag) => new Rectangle(tag.GetInt("x"), tag.GetInt("y"), tag.GetInt("width"), tag.GetInt("height"));
-    //}
 }

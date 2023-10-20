@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,25 +31,37 @@ namespace IDye.Common.Shaders
             }
             if (iDyePlayer != null)
             {
+                //*should* allow for stuff like metallic shader data to work... hopfully
+                if (iDyePlayer.iDyeItemID != null && GameShaders.Armor.GetShaderFromItemId(iDyePlayer.iDyeItemID[dyeSlot]) != null)
+                {
+                    GameShaders.Armor.GetShaderFromItemId(iDyePlayer.iDyeItemID[dyeSlot]).Apply(entity, drawData);
+                }
+
+                // might benefit to have a way to derive this from the iDyeItemID?
                 if (iDyePlayer.iDyeUseImage != null && iDyePlayer.iDyeUseImage[dyeSlot])
                 {
                     UseImage("Images/Misc/noise");
                 }
 
-                // here's where i'd put a shader swap. IF I HAD ONE
+                // shader swap here; get via iDyeItemID maybe?
 
+                // same deal as UseImage; way to get from iDyeItemID?
                 if (iDyePlayer.iDyePasses != null)
                 {
                     SwapProgram(iDyePlayer.iDyePasses[dyeSlot]);
                 }
+
+                // this is fine 
                 if (iDyePlayer.iDyePrimaryColors != null)
                 {
                     UseColor(iDyePlayer.iDyePrimaryColors[dyeSlot]);
                 }
 
+                // have not started on this yet
                 //UseSecondaryColor(0f, 0f, 1f);
+
+                base.Apply(entity, drawData);
             }
-            base.Apply(entity, drawData);
         }
 
         public IDyeArmorShaderData UseDyeSlot(int slot)
