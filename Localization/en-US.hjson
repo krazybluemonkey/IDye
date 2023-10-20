@@ -1,0 +1,10 @@
+Mods: {
+	IDye: {
+		Items: {
+			IntelligentDyeSlot1: {
+				DisplayName: Intelligent Dye (Slot 1)
+				Tooltip: ""
+			}
+		}
+	}
+}

@@ -1,0 +1,9 @@
+author = KBM-Quine
+homepage =
+version = 1.0
+displayName = Intellegent Dye
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, *.md, Properties\*
+hideCode = false
+includeSource = true
+languageVersion = 6
+includePDB = true
